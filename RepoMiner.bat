@@ -20,6 +20,8 @@ cd %repo_name%
 
 call mvn -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
 
-cd %origin%
+cd %origin%\XmlParser\out\production\XmlParser
 
 java Parser
+
+cd %origin%
