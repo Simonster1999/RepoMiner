@@ -14,7 +14,11 @@ for /f "tokens=1 delims=." %%a in ("%AFTER_SLASH%") do (
 
 cd /Users/%USERNAME%
 
-git clone %url%
+call git clone %url%
 cd %BEFORE_PERIOD%
 
-mvn -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
+call mvn -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
+
+cd %origin%
+
+java Parser
