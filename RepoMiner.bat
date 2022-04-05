@@ -25,8 +25,10 @@ rem Tool: Jacoco
 call mvn -q -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
 
 rem Parse coverage data
-cd %origin%\XmlParser\out\production\XmlParser
-java Parser
+cd %origin%\XmlParser
+call mvn -q clean install
+cd target
+java -jar XmlParser-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 rem Tool: Clover
 cd /Users/%USERNAME%/%repo_name%
