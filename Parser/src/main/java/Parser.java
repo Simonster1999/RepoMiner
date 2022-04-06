@@ -1,3 +1,4 @@
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -8,10 +9,21 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileWriter;
-
+import java.util.Formatter;
 
 public class Parser {
     public static void main(String[] args) {
+
+        /*String s = "---------------";
+        Formatter fmt = new Formatter();
+        fmt.format("%15s %15s %15s %15s\n", "Tool", "Stm", "Branch", "Line");
+        fmt.format("%15s %15s %15s %15s\n", s, s, s, s);
+        fmt.format("%15s %15s %15s %15s\n", "Jacoco", "50", "40", "X");
+        fmt.format("%15s %15s %15s %15s\n", "Cover", "20", "X", "50");
+        System.out.println(fmt);*/
+        /*if (args[0]=="jacoco") {
+            String XMLpath;
+        }*/
 
         try {
             File inputFile = new File(System.getProperty("user.home") +
@@ -37,8 +49,10 @@ public class Parser {
                     item.put(eElement.getAttribute("type"), (int)percentage+"%");
                 }
             }
-            json.put(doc.getDocumentElement().getAttribute("name"), item);
+            json.put("Jacoco", item);
+            //json.put("test", item);
             FileWriter file = new FileWriter("CoverageData.json");
+            //FileWriter file = new FileWriter("CoverageData.json"); //Append
             file.write(json.toJSONString());
             file.close();
         } catch (Exception e) {

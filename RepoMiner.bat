@@ -17,7 +17,7 @@ for /f "tokens=1 delims=." %%a in ("%temp%") do (
 
 cd /Users/%USERNAME%
 
-rem Clone and navgate to repository
+rem Clone and navigate to repository
 call git clone %url%
 cd %repo_name%
 
@@ -25,10 +25,10 @@ rem Tool: Jacoco
 call mvn -q -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
 
 rem Parse coverage data
-cd %origin%\XmlParser
+cd %origin%\Parser
 call mvn -q clean install
 cd target
-java -jar XmlParser-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 rem Tool: Clover
 cd /Users/%USERNAME%/%repo_name%
