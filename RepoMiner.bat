@@ -28,7 +28,7 @@ rem Parse coverage data
 cd %origin%\Parser
 call mvn -q clean install
 cd target
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /jackson-dataformat-xml/target/site/jacoco/jacoco.xml Jacoco
 
 rem Tool: Clover
 cd /Users/%USERNAME%/%repo_name%
