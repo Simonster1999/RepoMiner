@@ -21,22 +21,27 @@ rem Clone and navigate to repository
 call git clone %url%
 cd %repo_name%
 
+set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true
+
 rem Tool: Jacoco
-call mvn -q -Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
+set jacoco=org.jacoco:jacoco-maven-plugin:
+call mvn -q %skip% -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean %jacoco%prepare-agent install %jacoco%report
 
 rem Parse coverage data
 cd %origin%\Parser
 call mvn -q clean install
 cd target
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /jackson-dataformat-xml/target/site/jacoco/jacoco.xml Jacoco
+
+rem Args: Xmlpath, Tool
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/jacoco/jacoco.xml Jacoco
 
 rem Tool: Clover
 cd /Users/%USERNAME%/%repo_name%
 
 call mvn -q clean compile
 
-call mvn -q -Dmaven.test.failure.ignore=true org.openclover:clover-maven-plugin:instrument 
-call mvn -q org.openclover:clover-maven-plugin:clover
+set clover=org.openclover:clover-maven-plugin:
+call mvn -q %skip% %clover%setup test %clover%aggregate %clover%clover
 
 rem No parser yet
 
