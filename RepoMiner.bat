@@ -22,7 +22,7 @@ call git clone %url%
 cd %repo_name%
 
 rem Tool: Jacoco
-call mvn -q -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
+call mvn -q -Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report
 
 rem Parse coverage data
 cd %origin%\Parser
