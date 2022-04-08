@@ -1,3 +1,4 @@
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -10,7 +11,7 @@ import java.io.File;
 
 public class XmlParser {
 
-    public JSONObject parseXML (String xmlPath, String tool) {
+    public JSONArray parseXML (String xmlPath, String tool) {
         try {
             File inputFile = new File(System.getProperty("user.home") + xmlPath);
 
@@ -29,12 +30,14 @@ public class XmlParser {
         return null;
     }
 
-    private JSONObject Jacoco (Document doc) {
+    private JSONArray Jacoco (Document doc) {
 
         NodeList nList = doc.getElementsByTagName("counter");
-        JSONObject json = new JSONObject();
-        JSONObject item = new JSONObject();
+        JSONArray toolList = new JSONArray();
+        JSONObject tool = new JSONObject();
+        JSONObject metrics = new JSONObject();
 
+        metrics.put("NAME", "Jacoco");
         for (int i = nList.getLength()-6; i < nList.getLength(); i++) {
             Node nNode = nList.item(i);
 
@@ -43,10 +46,11 @@ public class XmlParser {
                 float covered = Integer.parseInt(eElement.getAttribute("covered"));
                 float missed = Integer.parseInt(eElement.getAttribute("missed"));
                 float percentage = (covered/(missed+covered))*100;
-                item.put(eElement.getAttribute("type"), (int)percentage+"%");
+                metrics.put(eElement.getAttribute("type"), (int)percentage+"%");
             }
         }
-        json.put("Jacoco", item);
-        return json;
+        tool.put("tool", metrics);
+        toolList.add(tool);
+        return toolList;
     }
 }
