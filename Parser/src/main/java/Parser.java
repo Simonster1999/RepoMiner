@@ -19,7 +19,7 @@ public class Parser {
         else if (args.length == 2) {
             String xmlPath = args[0];
             String tool = args[1];
-            JSONArray json = xmlParser.parseXML(xmlPath, tool);
+            JSONObject json = xmlParser.parseXML(xmlPath, tool);
 
             if (json == null) return;
 

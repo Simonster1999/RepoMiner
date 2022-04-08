@@ -43,14 +43,18 @@ call mvn -q clean compile
 set clover=org.openclover:clover-maven-plugin:
 call mvn -q %skip% %clover%setup test %clover%aggregate %clover%clover
 
-rem No parser yet
+rem Parse coverage data
+cd %origin%/Parser/target
+
+rem Args: Xmlpath, Tool
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/clover/clover.xml Clover
 
 rem Ending
-cd /Users/%USERNAME%/
+cd %origin%
 echo
 echo Do you wish to remove %repo_name%?
 rd /s "/Users/%USERNAME%/%repo_name%"
-cd %origin%
+
 
 
 

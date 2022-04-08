@@ -11,7 +11,7 @@ import java.io.File;
 
 public class XmlParser {
 
-    public JSONArray parseXML (String xmlPath, String tool) {
+    public JSONObject parseXML (String xmlPath, String tool) {
         try {
             File inputFile = new File(System.getProperty("user.home") + xmlPath);
 
@@ -22,6 +22,7 @@ public class XmlParser {
             doc.getDocumentElement().normalize();
 
             if (tool.equals("Jacoco")) return Jacoco(doc);
+            else if (tool.equals("Clover")) return Clover(doc);
             // else if ()
         }
         catch(Exception e) {
@@ -30,10 +31,9 @@ public class XmlParser {
         return null;
     }
 
-    private JSONArray Jacoco (Document doc) {
+    private JSONObject Jacoco (Document doc) {
 
         NodeList nList = doc.getElementsByTagName("counter");
-        JSONArray toolList = new JSONArray();
         JSONObject tool = new JSONObject();
         JSONObject metrics = new JSONObject();
 
@@ -50,7 +50,33 @@ public class XmlParser {
             }
         }
         tool.put("tool", metrics);
-        toolList.add(tool);
-        return toolList;
+        return tool;
+    }
+
+    private JSONObject Clover (Document doc) {
+
+        NodeList nList = doc.getElementsByTagName("metrics");
+        JSONObject tool = new JSONObject();
+        JSONObject metrics = new JSONObject();
+        Node nNode = nList.item(0);
+
+        metrics.put("NAME", "Clover");
+
+        if (nNode != null && nNode.getNodeType() == Node.ELEMENT_NODE) {
+            Element e = (Element) nNode;
+
+            float stmCov = Float.parseFloat(e.getAttribute("coveredstatements")) / Float.parseFloat(e.getAttribute("statements")) * 100;
+            float metCov = Float.parseFloat(e.getAttribute("coveredmethods")) / Float.parseFloat(e.getAttribute("methods")) * 100;
+            float conCov = Float.parseFloat(e.getAttribute("coveredconditionals")) / Float.parseFloat(e.getAttribute("conditionals")) * 100;
+
+            metrics.put("STATEMENT", (int) stmCov + "%");
+            metrics.put("METHOD", (int) metCov + "%");
+            metrics.put("CONDITION", (int) conCov + "%");
+            tool.put("tool", metrics);
+            return tool;
+        }
+        else {
+            return null;
+        }
     }
 }
