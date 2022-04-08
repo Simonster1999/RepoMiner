@@ -50,6 +50,8 @@ rem Args: Xmlpath, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/clover/clover.xml Clover
 
 rem Ending
+cd %origin%\Parser\target
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar 
 cd %origin%
 echo
 echo Do you wish to remove %repo_name%?

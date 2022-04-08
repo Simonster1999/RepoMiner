@@ -20,10 +20,11 @@ public class JsonParser {
 
         /* a formatter object to print the result in a table with some styling */
         Formatter fmt = new Formatter();
-        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", "---------------", "---------------", "---------------", "---------------");
+        String s = "---------------";
+        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", s, s, s, s, s, s, s, s, s);
         fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", "Tool Name", "Branch", "Instruction", "Line", "Complexity", "Method",
                                                                      "Class", "Statement", "Condition");
-        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", "---------------", "---------------", "---------------", "---------------");
+        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", s, s, s, s, s, s, s, s, s);
 
         /* iterate over each tool in the jsonArray and passing to getData method */
         for(Object tool : toolList){

@@ -35,7 +35,7 @@ public class Parser {
                 // Save previous reports
                 toolList = (JSONArray) parser.parse(fileReader);
                 fileReader.close();
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Exception e) {}
 
             // If there were not any previous coverage report, create an empty json array
             if (toolList == null) {
