@@ -23,7 +23,7 @@ cd %repo_name%
 
 set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true
 
-rem Tool: Jacoco
+rem --------------- Tool: Jacoco ---------------
 set jacoco=org.jacoco:jacoco-maven-plugin:
 call mvn -q %skip% -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean %jacoco%prepare-agent install %jacoco%report
 
@@ -35,7 +35,7 @@ cd target
 rem Args: Xmlpath, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/jacoco/jacoco.xml Jacoco
 
-rem Tool: Clover
+rem --------------- Tool: Clover ---------------
 cd /Users/%USERNAME%/%repo_name%
 
 call mvn -q clean compile
@@ -49,7 +49,22 @@ cd %origin%/Parser/target
 rem Args: Xmlpath, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/clover/clover.xml Clover
 
-rem Ending
+rem --------------- Tool: Jmockit ---------------
+cd /Users/%USERNAME%/%repo_name%
+
+call mvn -q clean compile
+
+rem Get tool dependency, use tool in surefire plugin
+call mvn dependency:get -Dartifact=org.jmockit:jmockit:1.49
+call mvn %skip% clean test -Dmaven.test.failure.ignore=true -DargLine="-javaagent:\"${settings.localRepository}\"/org/jmockit/jmockit/1.49/jmockit-1.49.jar -Dcoverage-output=xml"
+
+rem Parse coverage data
+cd %origin%/Parser/target
+
+rem Args: Xmlpath, Tool
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/coverage.xml Jmockit
+
+rem --------------- Ending ---------------
 cd %origin%\Parser\target
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar 
 cd %origin%
