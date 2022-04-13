@@ -55,8 +55,8 @@ cd /Users/%USERNAME%/%repo_name%
 call mvn -q clean compile
 
 rem Get tool dependency, use tool in surefire plugin
-call mvn dependency:get -Dartifact=org.jmockit:jmockit:1.49
-call mvn %skip% clean test -Dmaven.test.failure.ignore=true -DargLine="-javaagent:\"${settings.localRepository}\"/org/jmockit/jmockit/1.49/jmockit-1.49.jar -Dcoverage-output=xml"
+call mvn -q dependency:get -Dartifact=org.jmockit:jmockit:1.49
+call mvn -q %skip% clean test -Dmaven.test.failure.ignore=true -DargLine="-javaagent:\"${settings.localRepository}\"/org/jmockit/jmockit/1.49/jmockit-1.49.jar -Dcoverage-output=html -Djmockit-coverage-metrics=path"
 
 rem Parse coverage data
 cd %origin%/Parser/target

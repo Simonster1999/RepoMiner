@@ -23,7 +23,8 @@ public class XmlParser {
 
             if (tool.equals("Jacoco")) return Jacoco(doc);
             else if (tool.equals("Clover")) return Clover(doc);
-            // else if ()
+            else if (tool.equals("Jmockit")) return Jmockit(doc);
+            else System.out.println("The tool: " + tool + " is not supported");
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -75,8 +76,60 @@ public class XmlParser {
             tool.put("tool", metrics);
             return tool;
         }
-        else {
-            return null;
+        else return null;
+    }
+
+    private JSONObject Jmockit (Document doc) {
+
+        NodeList nList = doc.getElementsByTagName("lineToCover");
+        JSONObject tool = new JSONObject();
+        JSONObject metrics = new JSONObject();
+        float linesCovered = 0;
+        float linesTotal = nList.getLength();
+        float branchesCovered = 0;
+        float totalBranchesToCover = 0;
+        float testCov = 0;
+        float testTotal = 0;
+
+        metrics.put("NAME", "Jmockit");
+
+        for (int i = 0; i < nList.getLength(); i++) {
+            Node nNode = nList.item(i);
+
+            if (nNode != null && nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element e = (Element) nNode;
+
+                if (Boolean.parseBoolean(e.getAttribute("covered"))) linesCovered++;
+                if (!e.getAttribute("branchesToCover").equals("") && !e.getAttribute("coveredBranches").equals("")) {
+                    totalBranchesToCover += Float.parseFloat(e.getAttribute("branchesToCover"));
+                    branchesCovered += Float.parseFloat(e.getAttribute("coveredBranches"));
+                }
+                if (Boolean.parseBoolean(e.getAttribute("covered"))) {
+                    if (!e.getAttribute("branchesToCover").equals("") && !e.getAttribute("coveredBranches").equals("")) {
+                        testCov += Float.parseFloat(e.getAttribute("coveredBranches"));
+                        testTotal += Float.parseFloat(e.getAttribute("branchesToCover"));
+                    }
+                    else {
+                        testCov++;
+                        testTotal++;
+                    }
+                }
+// The coverage percentage for a source file is calculated as 100 * (NE + NFE) / (NS + NF), where NS is the total number of line segments,
+// NF the number of non-final fields, NE the number of executed segments, and NFE the number of fully exercised fields.
+
+// NE - covL, NFE - covB, NS - totL, NF - totB
+            }
         }
+        tool.put("tool", metrics);
+        //System.out.println(linesCovered + " " + linesTotal + " " + branchesCovered + " " + totalBranchesToCover);
+        //System.out.println(((float)linesCovered / linesTotal));
+        //System.out.println(((float)linesCovered / (linesTotal + linesCovered)));
+        //System.out.println(((float)branchesCovered / totalBranchesToCover));
+        //System.out.println(((float)(linesCovered+branchesCovered) / (linesTotal+totalBranchesToCover)));
+        //System.out.println(((float)(linesCovered+branchesCovered) / (linesTotal+totalBranchesToCover + linesCovered+branchesCovered)));
+        System.out.println(testCov / testTotal);
+        System.out.println((linesCovered + branchesCovered) / (linesTotal + totalBranchesToCover));
+        System.out.println((testCov + linesCovered) / (testTotal + linesTotal));
+        return null; //tool
     }
 }
