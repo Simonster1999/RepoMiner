@@ -23,11 +23,13 @@ call git clone %url%
 cd %repo_name%
 
 rem Arguments to let projects build successfully
-set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true
+set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true -Dmaven.javadoc.skip=true -Dgpg.skip
 
 rem --------------- Tool: Jacoco ---------------
 set jacoco=org.jacoco:jacoco-maven-plugin:
 call mvn -q %skip% -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean %jacoco%prepare-agent install %jacoco%report
+
+Echo Running Jacoco... This can take a while
 
 rem Parse coverage data
 cd %origin%\Parser
@@ -39,10 +41,12 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site
 
 rem --------------- After Jacoco ---------------
 rem Exclude Jacoco for other tools
-set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true -Djacoco.skip=true
+set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true -Djacoco.skip=true -Dmaven.javadoc.skip=true -Dgpg.skip
 
 rem --------------- Tool: Clover ---------------
 cd /Users/%USERNAME%/%repo_name%
+
+Echo Running Clover... This can take a while
 
 call mvn -q clean compile
 
@@ -58,17 +62,19 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site
 rem --------------- Tool: Jmockit ---------------
 cd /Users/%USERNAME%/%repo_name%
 
+Echo Running Jmockit... This can take a while
+
 call mvn -q clean compile
 
 rem Get tool dependency, use tool in surefire plugin
 call mvn -q dependency:get -Dartifact=org.jmockit:jmockit:1.49
-call mvn -q %skip% clean test -Dmaven.test.failure.ignore=true -DargLine="-javaagent:\"${settings.localRepository}\"/org/jmockit/jmockit/1.49/jmockit-1.49.jar -Dcoverage-output=html -Djmockit-coverage-metrics=path"
+call mvn -q %skip% clean test -Dmaven.test.failure.ignore=true -DargLine="-javaagent:\"${settings.localRepository}\"/org/jmockit/jmockit/1.49/jmockit-1.49.jar -Dcoverage-output=serial -Djmockit-coverage-metrics=all"
 
 rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Xmlpath, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/coverage.xml Jmockit
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/coverage.ser Jmockit
 
 rem --------------- Ending ---------------
 cd %origin%\Parser\target

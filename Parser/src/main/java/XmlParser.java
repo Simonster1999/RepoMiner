@@ -1,3 +1,5 @@
+import mockit.coverage.data.CoverageData;
+import mockit.coverage.data.FileCoverageData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
@@ -7,24 +9,26 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
+import java.io.*;
 
 public class XmlParser {
 
     public JSONObject parseXML (String xmlPath, String tool) {
         try {
-            File inputFile = new File(System.getProperty("user.home") + xmlPath);
+            if(!tool.equals("Jmockit")) {
+                File inputFile = new File(System.getProperty("user.home") + xmlPath);
 
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(inputFile);
-            doc.getDocumentElement().normalize();
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(inputFile);
+                doc.getDocumentElement().normalize();
 
-            if (tool.equals("Jacoco")) return Jacoco(doc);
-            else if (tool.equals("Clover")) return Clover(doc);
-            else if (tool.equals("Jmockit")) return Jmockit(doc);
-            else System.out.println("The tool: " + tool + " is not supported");
+                if (tool.equals("Jacoco")) return Jacoco(doc);
+                else if (tool.equals("Clover")) return Clover(doc);
+            }
+                if (tool.equals("Jmockit")) return Jmockit(System.getProperty("user.home") + xmlPath);
+                else System.out.println("The tool: " + tool + " is not supported");
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -79,57 +83,31 @@ public class XmlParser {
         else return null;
     }
 
-    private JSONObject Jmockit (Document doc) {
+    private JSONObject Jmockit (String path){
 
-        NodeList nList = doc.getElementsByTagName("lineToCover");
+        System.out.println("TESSSSTTTTTT");
         JSONObject tool = new JSONObject();
         JSONObject metrics = new JSONObject();
-        float linesCovered = 0;
-        float linesTotal = nList.getLength();
-        float branchesCovered = 0;
-        float totalBranchesToCover = 0;
-        float testCov = 0;
-        float testTotal = 0;
 
-        metrics.put("NAME", "Jmockit");
+        try {
+            File test = new File(path);
+            System.out.println(path);
+            CoverageData data = mockit.coverage.data.CoverageData.readDataFromFile(test);
 
-        for (int i = 0; i < nList.getLength(); i++) {
-            Node nNode = nList.item(i);
-
-            if (nNode != null && nNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element e = (Element) nNode;
-
-                if (Boolean.parseBoolean(e.getAttribute("covered"))) linesCovered++;
-                if (!e.getAttribute("branchesToCover").equals("") && !e.getAttribute("coveredBranches").equals("")) {
-                    totalBranchesToCover += Float.parseFloat(e.getAttribute("branchesToCover"));
-                    branchesCovered += Float.parseFloat(e.getAttribute("coveredBranches"));
-                }
-                if (Boolean.parseBoolean(e.getAttribute("covered"))) {
-                    if (!e.getAttribute("branchesToCover").equals("") && !e.getAttribute("coveredBranches").equals("")) {
-                        testCov += Float.parseFloat(e.getAttribute("coveredBranches"));
-                        testTotal += Float.parseFloat(e.getAttribute("branchesToCover"));
-                    }
-                    else {
-                        testCov++;
-                        testTotal++;
-                    }
-                }
-// The coverage percentage for a source file is calculated as 100 * (NE + NFE) / (NS + NF), where NS is the total number of line segments,
-// NF the number of non-final fields, NE the number of executed segments, and NFE the number of fully exercised fields.
-
-// NE - covL, NFE - covB, NS - totL, NF - totB
+            float totalLines = 0;
+            float coveredLines = 0;
+            for (FileCoverageData fileData : data.getFileToFileData().values()) {
+                totalLines += fileData.getTotalItems();
+                coveredLines += fileData.getCoveredItems();
             }
-        }
-        tool.put("tool", metrics);
-        //System.out.println(linesCovered + " " + linesTotal + " " + branchesCovered + " " + totalBranchesToCover);
-        //System.out.println(((float)linesCovered / linesTotal));
-        //System.out.println(((float)linesCovered / (linesTotal + linesCovered)));
-        //System.out.println(((float)branchesCovered / totalBranchesToCover));
-        //System.out.println(((float)(linesCovered+branchesCovered) / (linesTotal+totalBranchesToCover)));
-        //System.out.println(((float)(linesCovered+branchesCovered) / (linesTotal+totalBranchesToCover + linesCovered+branchesCovered)));
-        System.out.println(testCov / testTotal);
-        System.out.println((linesCovered + branchesCovered) / (linesTotal + totalBranchesToCover));
-        System.out.println((testCov + linesCovered) / (testTotal + linesTotal));
-        return null; //tool
+            float percentage = (coveredLines / totalLines) * 100;
+
+            metrics.put("NAME", "Jmockit");
+            metrics.put("LINE", (int) percentage + "%");
+            tool.put("tool", metrics);
+            System.out.println(percentage);
+        }catch(Exception e){}
+
+        return tool;
     }
 }
