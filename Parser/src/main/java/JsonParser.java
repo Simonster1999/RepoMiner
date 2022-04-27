@@ -20,11 +20,11 @@ public class JsonParser {
 
         /* a formatter object to print the result in a table with some styling */
         Formatter fmt = new Formatter();
-        String s = "---------------";
-        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", s, s, s, s, s, s, s, s, s);
-        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", "Tool Name", "Branch", "Instruction", "Line", "Complexity", "Method",
+        String s = "------------";
+        fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s, s);
+        fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", "Tool Name", "Branch", "Instruction", "Line", "Complexity", "Method",
                                                                      "Class", "Statement", "Condition");
-        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", s, s, s, s, s, s, s, s, s);
+        fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s, s);
 
         /* iterate over each tool in the jsonArray and passing to getData method */
         for(Object tool : toolList){
@@ -52,13 +52,13 @@ public class JsonParser {
 
         /* assign one row of the table to contain
          the metric data from the tool that was passed */
-        fmt.format("%15s %15s %15s %15s %15s %15s %15s %15s %15s\n", name, branch, instruction, line, complexity, method, clss, statement, condition);
+        fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", name, branch, instruction, line, complexity, method, clss, statement, condition);
     }
 
     private String isNull(String value){
         /* if this method is passed a string that is null we return a "X" instead */
         if(value == null) {
-            return "X";
+            return "-";
         }
         return value;
     }

@@ -1,3 +1,5 @@
+import mockit.coverage.data.CoverageData;
+import mockit.coverage.data.FileCoverageData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.w3c.dom.Document;
@@ -7,23 +9,26 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
+import java.io.*;
 
 public class XmlParser {
 
     public JSONObject parseXML (String xmlPath, String tool) {
         try {
-            File inputFile = new File(System.getProperty("user.home") + xmlPath);
+            if(!tool.equals("Jmockit")) {
+                File inputFile = new File(System.getProperty("user.home") + xmlPath);
 
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(inputFile);
-            doc.getDocumentElement().normalize();
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(inputFile);
+                doc.getDocumentElement().normalize();
 
-            if (tool.equals("Jacoco")) return Jacoco(doc);
-            else if (tool.equals("Clover")) return Clover(doc);
-            // else if ()
+                if (tool.equals("Jacoco")) return Jacoco(doc);
+                else if (tool.equals("Clover")) return Clover(doc);
+            }
+                if (tool.equals("Jmockit")) return Jmockit(System.getProperty("user.home") + xmlPath);
+                else System.out.println("The tool: " + tool + " is not supported");
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -75,8 +80,34 @@ public class XmlParser {
             tool.put("tool", metrics);
             return tool;
         }
-        else {
-            return null;
-        }
+        else return null;
+    }
+
+    private JSONObject Jmockit (String path){
+
+        System.out.println("TESSSSTTTTTT");
+        JSONObject tool = new JSONObject();
+        JSONObject metrics = new JSONObject();
+
+        try {
+            File test = new File(path);
+            System.out.println(path);
+            CoverageData data = mockit.coverage.data.CoverageData.readDataFromFile(test);
+
+            float totalLines = 0;
+            float coveredLines = 0;
+            for (FileCoverageData fileData : data.getFileToFileData().values()) {
+                totalLines += fileData.getTotalItems();
+                coveredLines += fileData.getCoveredItems();
+            }
+            float percentage = (coveredLines / totalLines) * 100;
+
+            metrics.put("NAME", "Jmockit");
+            metrics.put("LINE", (int) percentage + "%");
+            tool.put("tool", metrics);
+            System.out.println(percentage);
+        }catch(Exception e){}
+
+        return tool;
     }
 }
