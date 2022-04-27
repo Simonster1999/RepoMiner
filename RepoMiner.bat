@@ -23,13 +23,16 @@ call git clone %url%
 cd %repo_name%
 
 rem Arguments to let projects build successfully
-set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true -Dmaven.javadoc.skip=true -Dgpg.skip
+set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.javadoc.skip=true -Dgpg.skip
+
+rem --------------- Code coverage ---------------
+echo --------------- Code coverage ---------------
 
 rem --------------- Tool: Jacoco ---------------
 set jacoco=org.jacoco:jacoco-maven-plugin:
 call mvn -q %skip% -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean %jacoco%prepare-agent install %jacoco%report
 
-Echo Running Jacoco... This can take a while
+echo Running Jacoco... This can take a while
 
 rem Parse coverage data
 cd %origin%\Parser
@@ -40,13 +43,13 @@ rem Args: Xmlpath, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/jacoco/jacoco.xml Jacoco
 
 rem --------------- After Jacoco ---------------
-rem Exclude Jacoco for other tools
-set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.test.failure.ignore=true -Djacoco.skip=true -Dmaven.javadoc.skip=true -Dgpg.skip
+rem Skip Jacoco when running other tools
+set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.javadoc.skip=true -Dgpg.skip -Djacoco.skip=true
 
 rem --------------- Tool: Clover ---------------
 cd /Users/%USERNAME%/%repo_name%
 
-Echo Running Clover... This can take a while
+echo Running Clover... This can take a while
 
 call mvn -q clean compile
 
@@ -62,7 +65,7 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site
 rem --------------- Tool: Jmockit ---------------
 cd /Users/%USERNAME%/%repo_name%
 
-Echo Running Jmockit... This can take a while
+echo Running Jmockit... This can take a while
 
 call mvn -q clean compile
 
@@ -76,11 +79,54 @@ cd %origin%/Parser/target
 rem Args: Xmlpath, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/coverage.ser Jmockit
 
+rem --------------- Mutation testing ---------------
+echo --------------- Mutation testing ---------------
+
+rem --------------- Tool: PITest ---------------
+set var=F
+echo.
+set /p ans="Do you want to run PITest? It can take a long time. [Y/N]: "
+if "%ans%" == "Y" set var=T
+if "%ans%" == "y" set var=T
+if "%var%" == "F" goto litDar
+
+cd /Users/%USERNAME%/%repo_name%
+
+call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip%
+
+rem Call parser..
+
+rem --------------- Tool: LittleDarwin ---------------
+:litDar
+set var=F
+echo.
+set /p ans="Do you want to run LittleDarwin? It can take a long time. [Y/N]: "
+if "%ans%" == "Y" set var=T
+if "%ans%" == "y" set var=T
+if "%var%" == "F" goto end
+
+cd %origin%
+
+rem Check if LittleDarwin.exe is already downloaded from previous runs
+if not exist LittleDarwin.exe (
+  echo Downloading LittleDarwin 0.10.6
+  curl -L -o LittleDarwin.exe https://github.com/aliparsai/LittleDarwin/raw/master/binaries/0.10.6/LittleDarwin.exe
+)
+
+set skipComma=-Drat.skip,-Dcheckstyle.skip,-Dmaven.javadoc.skip=true,-Dgpg.skip,-Djacoco.skip=true
+call LittleDarwin.exe -m -b -p /Users/%USERNAME%/%repo_name%/src/main -t /Users/%USERNAME%/%repo_name% --timeout=100 --initial-build-command mvn,clean,compile,%skipComma% -c mvn,clean,test
+
+rem Call parser..
+
 rem --------------- Ending ---------------
+:end
+
 cd %origin%\Parser\target
+
+rem Print summary by giving no args
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar 
 cd %origin%
-echo
+echo.
 echo Do you wish to remove %repo_name%?
 rd /s "/Users/%USERNAME%/%repo_name%"
 
