@@ -1,5 +1,6 @@
 @echo off
 set /p url="Enter your git repository link here: "
+set /p tag="Enter the tag to clone, or leave blank for latest master/main: "
 
 rem Save starting directory
 set origin=%CD%
@@ -19,7 +20,11 @@ rem Navigate to user. All repositires will be cloned here
 cd /Users/%USERNAME%
 
 rem Clone and navigate to repository
-call git clone %url%
+if "%tag%"=="" (
+  call git clone --depth 1 %url%
+) else (
+  call git clone --depth 1 -b %tag% %url%
+)
 cd %repo_name%
 
 rem Arguments to let projects build successfully
@@ -30,9 +35,10 @@ echo --------------- Code coverage ---------------
 
 rem --------------- Tool: Jacoco ---------------
 set jacoco=org.jacoco:jacoco-maven-plugin:
-call mvn -q %skip% -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean %jacoco%prepare-agent install %jacoco%report
 
 echo Running Jacoco... This can take a while
+
+call mvn -q %skip% -Djacoco.destFile=./coverage/jacoco.exec -Djacoco.dataFile=./coverage/jacoco.exec clean %jacoco%prepare-agent install %jacoco%report
 
 rem Parse coverage data
 cd %origin%\Parser
@@ -91,7 +97,7 @@ if "%ans%" == "y" set var=T
 if "%var%" == "F" goto litDar
 
 cd /Users/%USERNAME%/%repo_name%
-
+echo Running PITest
 call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip%
 
 rem Call parser..
@@ -106,8 +112,8 @@ if "%ans%" == "y" set var=T
 if "%var%" == "F" goto end
 
 cd %origin%
-
-rem Check if LittleDarwin.exe is already downloaded from previous runs
+echo Running LittleDarwin
+rem Check if LittleDarwin.exe is not already downloaded
 if not exist LittleDarwin.exe (
   echo Downloading LittleDarwin 0.10.6
   curl -L -o LittleDarwin.exe https://github.com/aliparsai/LittleDarwin/raw/master/binaries/0.10.6/LittleDarwin.exe
