@@ -8,7 +8,6 @@ import org.jsoup.select.Elements;
 public class HtmlParser {
     public JSONObject parseHtml (String htmlPath, String tool) {
         try {
-            htmlPath = System.getProperty("user.home") + htmlPath;
             if (tool.equals("PITest")) return PITest(htmlPath);
             else if (tool.equals("LittleDarwin")) return LittleDarwin(htmlPath);
             else System.out.println("The tool: " + tool + " is not supported");

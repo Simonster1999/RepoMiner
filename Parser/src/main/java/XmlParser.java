@@ -15,9 +15,9 @@ public class XmlParser {
     public JSONObject parseXML (String xmlPath, String tool) {
 
         try {
-            if (tool.equals("Jmockit")) return Jmockit(System.getProperty("user.home") + xmlPath);
+            if (tool.equals("Jmockit")) return Jmockit(xmlPath);
 
-            File inputFile = new File(System.getProperty("user.home") + xmlPath);
+            File inputFile = new File(xmlPath);
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);

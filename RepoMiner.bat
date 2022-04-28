@@ -46,7 +46,7 @@ call mvn -q clean install
 cd target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/jacoco/jacoco.xml Jacoco
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/site/jacoco/jacoco.xml Jacoco
 
 rem --------------- After Jacoco ---------------
 rem Skip Jacoco when running other tools
@@ -66,7 +66,7 @@ rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/clover/clover.xml Clover
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/site/clover/clover.xml Clover
 
 rem --------------- Tool: Jmockit ---------------
 cd /Users/%USERNAME%/%repo_name%
@@ -83,7 +83,7 @@ rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/coverage.ser Jmockit
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/coverage.ser Jmockit
 
 rem --------------- Mutation testing ---------------
 echo --------------- Mutation testing ---------------
@@ -104,7 +104,7 @@ rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/pit-reports PITest
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/pit-reports PITest
 
 rem --------------- Tool: LittleDarwin ---------------
 :litDar
@@ -130,7 +130,7 @@ rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/LittleDarwinResults/index.html LittleDarwin
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/LittleDarwinResults/index.html LittleDarwin
 
 rem --------------- Ending ---------------
 :end
