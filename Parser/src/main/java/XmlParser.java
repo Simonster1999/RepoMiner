@@ -14,21 +14,21 @@ import java.io.*;
 public class XmlParser {
 
     public JSONObject parseXML (String xmlPath, String tool) {
+
         try {
-            if(!tool.equals("Jmockit")) {
-                File inputFile = new File(System.getProperty("user.home") + xmlPath);
+            if (tool.equals("Jmockit")) return Jmockit(System.getProperty("user.home") + xmlPath);
 
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(inputFile);
-                doc.getDocumentElement().normalize();
+            File inputFile = new File(System.getProperty("user.home") + xmlPath);
 
-                if (tool.equals("Jacoco")) return Jacoco(doc);
-                else if (tool.equals("Clover")) return Clover(doc);
-            }
-                if (tool.equals("Jmockit")) return Jmockit(System.getProperty("user.home") + xmlPath);
-                else System.out.println("The tool: " + tool + " is not supported");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+
+            if (tool.equals("Jacoco")) return Jacoco(doc);
+            else if (tool.equals("Clover")) return Clover(doc);
+            else System.out.println("The tool: " + tool + " is not supported");
         }
         catch(Exception e) {
             e.printStackTrace();
@@ -85,13 +85,11 @@ public class XmlParser {
 
     private JSONObject Jmockit (String path){
 
-        System.out.println("TESSSSTTTTTT");
         JSONObject tool = new JSONObject();
         JSONObject metrics = new JSONObject();
 
         try {
             File test = new File(path);
-            System.out.println(path);
             CoverageData data = mockit.coverage.data.CoverageData.readDataFromFile(test);
 
             float totalLines = 0;
@@ -105,7 +103,6 @@ public class XmlParser {
             metrics.put("NAME", "Jmockit");
             metrics.put("LINE", (int) percentage + "%");
             tool.put("tool", metrics);
-            System.out.println(percentage);
         }catch(Exception e){}
 
         return tool;

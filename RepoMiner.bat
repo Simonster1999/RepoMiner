@@ -45,7 +45,7 @@ cd %origin%\Parser
 call mvn -q clean install
 cd target
 
-rem Args: Xmlpath, Tool
+rem Args: Report path, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/jacoco/jacoco.xml Jacoco
 
 rem --------------- After Jacoco ---------------
@@ -65,7 +65,7 @@ call mvn -q %skip% %clover%setup test %clover%aggregate %clover%clover
 rem Parse coverage data
 cd %origin%/Parser/target
 
-rem Args: Xmlpath, Tool
+rem Args: Report path, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/site/clover/clover.xml Clover
 
 rem --------------- Tool: Jmockit ---------------
@@ -82,7 +82,7 @@ call mvn -q %skip% clean test -Dmaven.test.failure.ignore=true -DargLine="-javaa
 rem Parse coverage data
 cd %origin%/Parser/target
 
-rem Args: Xmlpath, Tool
+rem Args: Report path, Tool
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/coverage.ser Jmockit
 
 rem --------------- Mutation testing ---------------
@@ -100,7 +100,11 @@ cd /Users/%USERNAME%/%repo_name%
 echo Running PITest
 call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip%
 
-rem Call parser..
+rem Parse coverage data
+cd %origin%/Parser/target
+
+rem Args: Report path, Tool
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/target/pit-reports PITest
 
 rem --------------- Tool: LittleDarwin ---------------
 :litDar
