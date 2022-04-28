@@ -126,7 +126,11 @@ if not exist LittleDarwin.exe (
 set skipComma=-Drat.skip,-Dcheckstyle.skip,-Dmaven.javadoc.skip=true,-Dgpg.skip,-Djacoco.skip=true
 call LittleDarwin.exe -m -b -p /Users/%USERNAME%/%repo_name%/src/main -t /Users/%USERNAME%/%repo_name% --timeout=100 --initial-build-command mvn,clean,compile,%skipComma% -c mvn,clean,test
 
-rem Call parser..
+rem Parse coverage data
+cd %origin%/Parser/target
+
+rem Args: Report path, Tool
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /%repo_name%/LittleDarwinResults/index.html LittleDarwin
 
 rem --------------- Ending ---------------
 :end

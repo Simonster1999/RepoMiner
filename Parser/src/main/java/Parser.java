@@ -31,16 +31,13 @@ public class Parser {
 
             if (tool.equals("PITest") || tool.equals("LittleDarwin")) {
                 json = htmlParser.parseHtml(reportPath, tool);
+                //System.out.println("Json: " + json.toJSONString());
                 summaryFile = "MutationData.json";
             }
             else {
                 json = xmlParser.parseXML(reportPath, tool);
                 summaryFile = "CoverageData.json";
             }
-            /*if (tool.equals("PITest")) {
-                htmlParser.parseHtml(reportPath, tool);
-                return;
-            }*/
 
             // Check if a json object was returned
             if (json == null) return;

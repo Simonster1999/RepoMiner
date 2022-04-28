@@ -37,7 +37,7 @@ public class JsonParser {
         }
 
         /* iterate over each tool in the jsonArray and passing to getData method */
-        for(Object tool : toolList){
+        for (Object tool : toolList){
             getData((JSONObject) tool, fmt, mode);
         }
 
