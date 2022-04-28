@@ -30,10 +30,9 @@ public class JsonParser {
             mode = "mutation";
         }
         else {
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s, s);
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", "Tool Name", "Branch", "Instruction", "Line", "Complexity", "Method",
-                    "Class", "Statement", "Condition");
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s, s);
+            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s);
+            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", "Tool Name", "Branch", "Instruction", "Line", "Method", "Class", "Statement", "Condition");
+            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s);
             mode = "coverage";
         }
 
@@ -62,7 +61,6 @@ public class JsonParser {
             String branch = isNull((String) values.get("BRANCH"));
             String instruction = isNull((String) values.get("INSTRUCTION"));
             String line = isNull((String) values.get("LINE"));
-            String complexity = isNull((String) values.get("COMPLEXITY"));
             String method = isNull((String) values.get("METHOD"));
             String clss = isNull((String) values.get("CLASS"));
             String statement = isNull((String) values.get("STATEMENT"));
@@ -70,7 +68,7 @@ public class JsonParser {
 
         /* assign one row of the table to contain
          the metric data from the tool that was passed */
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s %12s\n", name, branch, instruction, line, complexity, method, clss, statement, condition);
+            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", name, branch, instruction, line, method, clss, statement, condition);
         }
     }
 
