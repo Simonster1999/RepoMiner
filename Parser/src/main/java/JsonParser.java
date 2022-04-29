@@ -14,10 +14,14 @@ public class JsonParser {
 
         /* object that allows us to parse json */
         JSONParser parser = new JSONParser();
+        JSONArray toolList;
 
         /* retrieve all the data in the json file */
-        JSONArray toolList = (JSONArray) parser.parse(new FileReader(jsonFile));
-
+        try {
+            toolList = (JSONArray) parser.parse(new FileReader(jsonFile));
+        } catch (Exception e) {
+            return "";
+        }
         /* a formatter object to print the result in a table with some styling */
         Formatter fmt = new Formatter();
         String s = "------------";
