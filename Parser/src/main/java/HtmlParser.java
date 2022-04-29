@@ -2,7 +2,6 @@ import org.json.simple.JSONObject;
 import java.io.File;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class HtmlParser {
@@ -25,7 +24,8 @@ public class HtmlParser {
         String[] dirs = new File(path).list();
 
         try {
-            File report = new File (path + "/" + dirs[0] + "/index.html");
+            //File report = new File (path + "/" + dirs[0] + "/index.html");
+            String report = path + "/" + dirs[0] + "/index.html";
             Document doc = Jsoup.parse(report);
             Elements elements = doc.getElementsByAttributeValue("class", "coverage_legend");
             // Get second element with class=coverage_legend
@@ -43,10 +43,10 @@ public class HtmlParser {
         JSONObject tool = new JSONObject();
         JSONObject metrics = new JSONObject();
         metrics.put("NAME", "LittleDarwin");
-        File report = new File(path);
+        //File report = new File(path);
 
         try {
-            Document doc = Jsoup.parse(report);
+            Document doc = Jsoup.parse(path);
             Elements elements = doc.getElementsByAttributeValue("class", "coverage_legend");
             // Get first element with class=coverage_legend
             String[] full = elements.get(0).text().split("/");
