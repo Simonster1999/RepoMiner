@@ -1,5 +1,6 @@
 @echo off
 set /p url="Enter your git repository link here: "
+set tag=
 set /p tag="Enter the tag to clone, or leave blank for latest master/main: "
 
 rem Save starting directory

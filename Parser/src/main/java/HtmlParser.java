@@ -24,9 +24,8 @@ public class HtmlParser {
         String[] dirs = new File(path).list();
 
         try {
-            //File report = new File (path + "/" + dirs[0] + "/index.html");
-            String report = path + "/" + dirs[0] + "/index.html";
-            Document doc = Jsoup.parse(report);
+            File report = new File (path + "/" + dirs[0] + "/index.html");
+            Document doc = Jsoup.parse(report, "UTF-8");
             Elements elements = doc.getElementsByAttributeValue("class", "coverage_legend");
             // Get second element with class=coverage_legend
             String[] full = elements.get(1).text().split("/");
@@ -43,10 +42,10 @@ public class HtmlParser {
         JSONObject tool = new JSONObject();
         JSONObject metrics = new JSONObject();
         metrics.put("NAME", "LittleDarwin");
-        //File report = new File(path);
+        File report = new File(path);
 
         try {
-            Document doc = Jsoup.parse(path);
+            Document doc = Jsoup.parse(report, "UTF-8");
             Elements elements = doc.getElementsByAttributeValue("class", "coverage_legend");
             // Get first element with class=coverage_legend
             String[] full = elements.get(0).text().split("/");
