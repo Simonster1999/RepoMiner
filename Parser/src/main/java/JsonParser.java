@@ -52,6 +52,7 @@ public class JsonParser {
 
         /* store all the metrics in a variable called values */
         JSONObject values = (JSONObject) tool.get("tool");
+        if (values == null) return;
 
         if (mode.equals("mutation")) {
             String name = isNull((String) values.get("NAME"));

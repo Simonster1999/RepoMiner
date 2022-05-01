@@ -90,7 +90,6 @@ public class XmlParser {
         try {
             File test = new File(path);
             CoverageData data = mockit.coverage.data.CoverageData.readDataFromFile(test);
-
             float totalLines = 0;
             float coveredLines = 0;
             for (FileCoverageData fileData : data.getFileToFileData().values()) {
@@ -98,12 +97,13 @@ public class XmlParser {
                 coveredLines += fileData.getCoveredItems();
             }
             float percentage = (coveredLines / totalLines) * 100;
-
             metrics.put("NAME", "Jmockit");
             metrics.put("LINE", (int) percentage + "%");
             tool.put("tool", metrics);
-        }catch(Exception e){}
 
-        return tool;
+            return tool;
+        } catch (Exception e) { e.printStackTrace(); }
+
+        return null;
     }
 }

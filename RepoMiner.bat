@@ -58,7 +58,8 @@ cd /Users/%USERNAME%/%repo_name%
 
 echo Running Clover... This can take a while
 
-call mvn -q clean compile
+rem Clean up repo from previous tool
+call mvn -q clean
 
 set clover=org.openclover:clover-maven-plugin:
 call mvn -q %skip% %clover%setup test %clover%aggregate %clover%clover
@@ -74,7 +75,8 @@ cd /Users/%USERNAME%/%repo_name%
 
 echo Running Jmockit... This can take a while
 
-call mvn -q clean compile
+rem Clean up repo from previous tool
+call mvn -q clean
 
 rem Get tool dependency, use tool in surefire plugin
 call mvn -q dependency:get -Dartifact=org.jmockit:jmockit:1.49
@@ -144,7 +146,3 @@ cd %origin%
 echo.
 echo Do you wish to remove %repo_name%?
 rd /s "/Users/%USERNAME%/%repo_name%"
-
-
-
-

@@ -31,7 +31,6 @@ public class Parser {
 
             if (tool.equals("PITest") || tool.equals("LittleDarwin")) {
                 json = htmlParser.parseHtml(reportPath, tool);
-                //System.out.println("Json: " + json.toJSONString());
                 summaryFile = "MutationData.json";
             }
             else {
