@@ -99,9 +99,10 @@ rem if "%ans%" == "Y" set var=T
 rem if "%ans%" == "y" set var=T
 rem if "%var%" == "F" goto litDar
 
+set PITmutators=-Dmutators=CONDITIONALS_BOUNDARY,INCREMENTS,INVERT_NEGS,MATH,NEGATE_CONDITIONALS
 cd /Users/%USERNAME%/%repo_name%
 echo Running PITest
-call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip%
+call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip% %PITmutators%
 
 rem Parse coverage data
 cd %origin%/Parser/target
@@ -146,8 +147,8 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar
 rem Reset repo to orginal state
 cd /Users/%USERNAME%/%repo_name%
 call mvn -q clean
-call git reset --hard
-call git clean -f -d
+call git reset --hard -q
+call git clean -f -d -q
 
 cd %origin%
 echo.

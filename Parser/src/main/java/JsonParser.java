@@ -29,11 +29,11 @@ public class JsonParser {
 
         if (jsonFile.equals("MutationData.json")) {
             mode = "mutation";
-            table += "\nTool Name,Mutation Cov.";
+            table += "Tool Name,Mutation Cov.";
         }
         else {
             mode = "coverage";
-            table += "\nTool Name,Branch,Instruction,Line,Method,Class,Statement,Condition";
+            table += "Tool Name,Branch,Instruction,Line,Method,Class,Statement,Condition";
         }
 
         /* iterate over each tool in the jsonArray and passing to getData method */
