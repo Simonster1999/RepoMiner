@@ -141,7 +141,14 @@ rem --------------- Ending ---------------
 cd %origin%\Parser\target
 
 rem Print summary by giving no args
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar 
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+rem Reset repo to orginal state
+cd /Users/%USERNAME%/%repo_name%
+call mvn -q clean
+call git reset --hard
+call git clean -f -d
+
 cd %origin%
 echo.
 rem echo Do you wish to remove %repo_name%?
