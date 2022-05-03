@@ -92,12 +92,12 @@ rem --------------- Mutation testing ---------------
 echo --------------- Mutation testing ---------------
 
 rem --------------- Tool: PITest ---------------
-set var=F
+set var=T
 echo.
-set /p ans="Do you want to run PITest? It can take a long time. [Y/N]: "
-if "%ans%" == "Y" set var=T
-if "%ans%" == "y" set var=T
-if "%var%" == "F" goto litDar
+rem set /p ans="Do you want to run PITest? It can take a long time. [Y/N]: "
+rem if "%ans%" == "Y" set var=T
+rem if "%ans%" == "y" set var=T
+rem if "%var%" == "F" goto litDar
 
 cd /Users/%USERNAME%/%repo_name%
 echo Running PITest
@@ -111,12 +111,12 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_
 
 rem --------------- Tool: LittleDarwin ---------------
 :litDar
-set var=F
+set var=T
 echo.
-set /p ans="Do you want to run LittleDarwin? It can take a long time. [Y/N]: "
-if "%ans%" == "Y" set var=T
-if "%ans%" == "y" set var=T
-if "%var%" == "F" goto end
+rem set /p ans="Do you want to run LittleDarwin? It can take a long time. [Y/N]: "
+rem if "%ans%" == "Y" set var=T
+rem if "%ans%" == "y" set var=T
+rem if "%var%" == "F" goto end
 
 cd %origin%
 echo Running LittleDarwin
@@ -144,5 +144,5 @@ rem Print summary by giving no args
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar 
 cd %origin%
 echo.
-echo Do you wish to remove %repo_name%?
-rd /s "/Users/%USERNAME%/%repo_name%"
+rem echo Do you wish to remove %repo_name%?
+rem rd /s "/Users/%USERNAME%/%repo_name%"
