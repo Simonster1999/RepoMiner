@@ -17,8 +17,10 @@ for /f "tokens=2 delims=/" %%a in ("%user_repo%") do (
 rem Remove last 4 characters (.git)
 set repo_name=%temp:~0,-4%
 
-rem Navigate to user. All repositires will be cloned here
+rem Navigate to user/Repositories. All repositires will be cloned here
 cd /Users/%USERNAME%
+if not exist Repositories mkdir Repositories
+cd Repositories
 
 rem Clone and navigate to repository
 if "%tag%"=="" (
@@ -47,14 +49,14 @@ call mvn -q clean install
 cd target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/site/jacoco/jacoco.xml Jacoco
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/Repositories/%repo_name%/target/site/jacoco/jacoco.xml Jacoco
 
 rem --------------- After Jacoco ---------------
 rem Skip Jacoco when running other tools
 set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.javadoc.skip=true -Dgpg.skip -Djacoco.skip=true
 
 rem --------------- Tool: Clover ---------------
-cd /Users/%USERNAME%/%repo_name%
+cd /Users/%USERNAME%/Repositories/%repo_name%
 
 echo Running Clover... This can take a while
 
@@ -68,10 +70,10 @@ rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/site/clover/clover.xml Clover
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/Repositories/%repo_name%/target/site/clover/clover.xml Clover
 
 rem --------------- Tool: Jmockit ---------------
-cd /Users/%USERNAME%/%repo_name%
+cd /Users/%USERNAME%/Repositories/%repo_name%
 
 echo Running Jmockit... This can take a while
 
@@ -86,7 +88,7 @@ rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/coverage.ser Jmockit
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/Repositories/%repo_name%/target/coverage.ser Jmockit
 
 rem --------------- Mutation testing ---------------
 echo --------------- Mutation testing ---------------
@@ -100,7 +102,7 @@ rem if "%ans%" == "y" set var=T
 rem if "%var%" == "F" goto litDar
 
 set PITmutators=-Dmutators=CONDITIONALS_BOUNDARY,INCREMENTS,INVERT_NEGS,MATH,NEGATE_CONDITIONALS
-cd /Users/%USERNAME%/%repo_name%
+cd /Users/%USERNAME%/Repositories/%repo_name%
 echo Running PITest
 call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip% %PITmutators%
 
@@ -108,7 +110,7 @@ rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/target/pit-reports PITest
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/Repositories/%repo_name%/target/pit-reports PITest
 
 rem --------------- Tool: LittleDarwin ---------------
 :litDar
@@ -128,13 +130,13 @@ if not exist LittleDarwin.exe (
 )
 
 set skipComma=-Drat.skip,-Dcheckstyle.skip,-Dmaven.javadoc.skip=true,-Dgpg.skip,-Djacoco.skip=true
-call LittleDarwin.exe -m -b -p /Users/%USERNAME%/%repo_name%/src/main -t /Users/%USERNAME%/%repo_name% --timeout=100 --initial-build-command mvn,clean,compile,%skipComma% -c mvn,clean,test
+call LittleDarwin.exe -m -b -p /Users/%USERNAME%/Repositories/%repo_name%/src/main -t /Users/%USERNAME%/Repositories/%repo_name% --timeout=100 --initial-build-command mvn,clean,compile,%skipComma% -c mvn,clean,test
 
 rem Parse coverage data
 cd %origin%/Parser/target
 
 rem Args: Report path, Tool
-java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/%repo_name%/LittleDarwinResults/index.html LittleDarwin
+java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/Repositories/%repo_name%/LittleDarwinResults/index.html LittleDarwin
 
 rem --------------- Ending ---------------
 :end
@@ -145,10 +147,10 @@ rem Print summary by giving no args
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 rem Reset repo to orginal state
-cd /Users/%USERNAME%/%repo_name%
-call mvn -q clean
-call git reset --hard -q
-call git clean -f -d -q
+cd /Users/%USERNAME%/Repositories/%repo_name%
+rem call mvn -q clean
+rem call git reset --hard -q
+rem call git clean -f -d -q
 
 cd %origin%
 echo.
