@@ -148,9 +148,9 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 rem Reset repo to orginal state
 cd /Users/%USERNAME%/Repositories/%repo_name%
-rem call mvn -q clean
-rem call git reset --hard -q
-rem call git clean -f -d -q
+call mvn -q clean
+call git reset --hard -q
+call git clean -f -d -q
 
 cd %origin%
 echo.
