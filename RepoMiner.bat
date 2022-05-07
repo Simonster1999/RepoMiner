@@ -31,7 +31,7 @@ if "%tag%"=="" (
 cd %repo_name%
 
 rem Arguments to let projects build successfully
-set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.javadoc.skip=true -Dgpg.skip
+set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.javadoc.skip=true -Dgpg.skip -Dmaven.test.failure.ignore=true -Denforcer.skip
 
 rem --------------- Code coverage ---------------
 echo --------------- Code coverage ---------------
@@ -53,7 +53,7 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/Reposi
 
 rem --------------- After Jacoco ---------------
 rem Skip Jacoco when running other tools
-set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.javadoc.skip=true -Dgpg.skip -Djacoco.skip=true
+set skip=-Drat.skip -Dcheckstyle.skip -Dmaven.javadoc.skip=true -Dgpg.skip -Dmaven.test.failure.ignore=true -Denforcer.skip -Djacoco.skip=true
 
 rem --------------- Tool: Clover ---------------
 cd /Users/%USERNAME%/Repositories/%repo_name%
@@ -129,7 +129,7 @@ if not exist LittleDarwin.exe (
   curl -L -o LittleDarwin.exe https://github.com/aliparsai/LittleDarwin/raw/master/binaries/0.10.6/LittleDarwin.exe
 )
 
-set skipComma=-Drat.skip,-Dcheckstyle.skip,-Dmaven.javadoc.skip=true,-Dgpg.skip,-Djacoco.skip=true
+set skipComma=-Drat.skip,-Dcheckstyle.skip,-Dmaven.javadoc.skip=true,-Dgpg.skip,-Djacoco.skip=true,-Denforcer.skip
 call LittleDarwin.exe -m -b -p /Users/%USERNAME%/Repositories/%repo_name%/src/main -t /Users/%USERNAME%/Repositories/%repo_name% --timeout=100 --initial-build-command mvn,clean,compile,%skipComma% -c mvn,clean,test
 
 rem Parse coverage data
