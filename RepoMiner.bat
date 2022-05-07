@@ -143,6 +143,13 @@ rem --------------- Ending ---------------
 
 cd %origin%\Parser\target
 
+echo %repo_name%
+if "%tag%"=="" (
+  echo.
+) else (
+  echo tag: %tag%
+)
+
 rem Print summary by giving no args
 java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar
 
