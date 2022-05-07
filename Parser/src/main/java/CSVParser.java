@@ -24,7 +24,7 @@ public class CSVParser {
         JSONObject values = new JSONObject();
         int iterations = 0;
         String[] columns;
-        
+
         while ((columns = reader.readNext()) != null) {
             if(iterations <= 0){
                 iterations++;

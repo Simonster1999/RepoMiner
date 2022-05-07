@@ -1,3 +1,4 @@
+import com.opencsv.exceptions.CsvValidationException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -9,13 +10,14 @@ import java.io.IOException;
 
 public class Parser {
 
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException, CsvValidationException {
 
         // No arguments given, will attempt to print the code coverage and mutation summaries
         if (args.length == 0) {
             JsonParser jsonParser = new JsonParser();
             System.out.println(jsonParser.parse("CoverageData.json"));
             System.out.println(jsonParser.parse("MutationData.json"));
+            System.out.println(jsonParser.parse("DiversityData.json"));
         }
 
         // Two arguments given, assumed to be a path from User to a tools report, and what tool was used
@@ -24,6 +26,7 @@ public class Parser {
             String tool = args[1];
             XmlParser xmlParser = new XmlParser();
             HtmlParser htmlParser = new HtmlParser();
+            CSVParser CSVPaser = new CSVParser();
             JSONParser parser = new JSONParser();
             JSONArray toolList = null;
             JSONObject json = null;
@@ -33,8 +36,12 @@ public class Parser {
                 json = htmlParser.parseHtml(reportPath, tool);
                 summaryFile = "MutationData.json";
             }
-            else {
+            else if (tool.equals("Jacoco") || tool.equals("Clover") || tool.equals("Jmockit")){
                 json = xmlParser.parseXML(reportPath, tool);
+                summaryFile = "CoverageData.json";
+            }
+            else {
+                json = CSVPaser.parseCSV(reportPath, tool);
                 summaryFile = "CoverageData.json";
             }
 
