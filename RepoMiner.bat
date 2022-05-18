@@ -95,16 +95,16 @@ echo --------------- Mutation testing ---------------
 
 rem --------------- Tool: PITest ---------------
 set var=T
-echo.
+rem echo.
 rem set /p ans="Do you want to run PITest? It can take a long time. [Y/N]: "
 rem if "%ans%" == "Y" set var=T
 rem if "%ans%" == "y" set var=T
 rem if "%var%" == "F" goto litDar
 
-set PITmutators=-Dmutators=CONDITIONALS_BOUNDARY,INCREMENTS,INVERT_NEGS,MATH,NEGATE_CONDITIONALS
+set PITmutators=-Dmutators=ROR,AOR1,ABS,MATH,INVERT_NEGS,INCREMENTS,CONDITIONALS_BOUNDARY,NEGATE_CONDITIONALS
 cd /Users/%USERNAME%/Repositories/%repo_name%
 echo Running PITest
-call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip% %PITmutators%
+call mvn -q test-compile org.pitest:pitest-maven:1.7.0:mutationCoverage %skip% %PITmutators%
 
 rem Parse coverage data
 cd %origin%/Parser/target
@@ -115,7 +115,7 @@ java -jar Parser-1.0-SNAPSHOT-jar-with-dependencies.jar /Users/%USERNAME%/Reposi
 rem --------------- Tool: LittleDarwin ---------------
 :litDar
 set var=T
-echo.
+rem echo.
 rem set /p ans="Do you want to run LittleDarwin? It can take a long time. [Y/N]: "
 rem if "%ans%" == "Y" set var=T
 rem if "%ans%" == "y" set var=T
