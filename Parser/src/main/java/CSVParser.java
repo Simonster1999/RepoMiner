@@ -9,50 +9,85 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class CSVParser {
     public JSONObject parseCSV (String CSVPath, String divType) throws CsvValidationException, IOException {
         CSVReader reader = new CSVReader(new FileReader(CSVPath));
+        HashMap<String, ArrayList<Float>> matrix = parseFile(reader);
+        float averageOfAverage = getAverageOfAverage(matrix);
+        float meanSuite = getMeanOfSuite(matrix);
+        float standardDiv = getStandardDeviation(matrix, meanSuite);
         JSONObject Diversity = new JSONObject();
-        JSONObject values = getDiversityPerTest(reader);
-        values.put("TOTAL DIVERSITY", getTotalDiversity(values));
-        Diversity.put(divType, values);
+        JSONObject vals = new JSONObject();
+        vals.put("AVERAGEOFAVERAGE", averageOfAverage);
+        vals.put("MEANSUITE", meanSuite);
+        vals.put("STANDARDDIV", standardDiv);
+        Diversity.put(divType, vals);
 
         return Diversity;
     }
-    private JSONObject getDiversityPerTest(CSVReader reader) throws CsvValidationException, IOException {
-        JSONObject values = new JSONObject();
+    private HashMap<String, ArrayList<Float>> parseFile(CSVReader reader) throws CsvValidationException, IOException {
+        HashMap<String, ArrayList<Float>> testValueMatrix = new HashMap<>();
+        ArrayList<Float> values = new ArrayList<>();
         int iterations = 0;
         String[] columns;
-
         while ((columns = reader.readNext()) != null) {
             if(iterations <= 0){
                 iterations++;
                 continue;
             }
-            float count = 0;
-            float total = 0;
             for(int i = 0; i < columns.length; i++){
                 if(i == 0){
                     continue;
                 }
-                count++;
-                total += Float.parseFloat(columns[i]);
+                values.add(Float.parseFloat(columns[i]));
             }
-            float average = total/(count-1);
-            values.put(columns[0], average);
+            testValueMatrix.put(columns[0], values);
         }
-
-        return values;
+        return testValueMatrix;
     }
-    private float getTotalDiversity(JSONObject values){
+    private float getAverageOfAverage(HashMap<String, ArrayList<Float>> matrix){
+        ArrayList<Float> meanPerColumn = new ArrayList<Float>();
+        for(ArrayList<Float> column : matrix.values()){
+            float total = 0;
+            for(float value : column){
+                total += value;
+            }
+            float mean = total/(column.size()-1);
+            meanPerColumn.add(mean);
+        }
         float total = 0;
-        float count = 0;
-        for(Object obj : values.values()){
-            total += Float.parseFloat(obj.toString());
-            count++;
+        for(float value : meanPerColumn){
+            total += value;
         }
 
-        return total/count;
+        return total/meanPerColumn.size();
+    }
+    private float getMeanOfSuite(HashMap<String, ArrayList<Float>> matrix){
+        float total = 0;
+        int n = 0;
+
+        for(ArrayList<Float> column : matrix.values()){
+            for(float value : column){
+                total += value;
+                n++;
+            }
+        }
+        float mean = total/(n-1);
+
+        return mean;
+    }
+    private float getStandardDeviation(HashMap<String, ArrayList<Float>> matrix, float mean) throws CsvValidationException, IOException {
+        float s = 0;
+        int n = matrix.size();
+        for(ArrayList<Float> column : matrix.values()){
+            for(float value : column){
+                s += (float) Math.sqrt(Math.pow(value - mean, 2) / (n*(column.size()-1)));
+            }
+        }
+        return s;
     }
 }

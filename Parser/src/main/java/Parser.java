@@ -42,7 +42,7 @@ public class Parser {
             }
             else {
                 json = CSVPaser.parseCSV(reportPath, tool);
-                summaryFile = "CoverageData.json";
+                summaryFile = "DiversityData.json";
             }
 
             // Check if a json object was returned
