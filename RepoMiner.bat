@@ -101,10 +101,9 @@ rem if "%ans%" == "Y" set var=T
 rem if "%ans%" == "y" set var=T
 rem if "%var%" == "F" goto litDar
 
-set PITmutators=-Dmutators=ROR,AOR1,ABS,MATH,INVERT_NEGS,INCREMENTS,CONDITIONALS_BOUNDARY,NEGATE_CONDITIONALS
 cd /Users/%USERNAME%/Repositories/%repo_name%
 echo Running PITest
-call mvn -q test-compile org.pitest:pitest-maven:1.7.0:mutationCoverage %skip% %PITmutators%
+call mvn -q test-compile org.pitest:pitest-maven:1.7.0:mutationCoverage %skip%
 
 rem Parse coverage data
 cd %origin%/Parser/target
@@ -130,7 +129,7 @@ if not exist LittleDarwin.exe (
 )
 
 set skipComma=-Drat.skip,-Dcheckstyle.skip,-Dmaven.javadoc.skip=true,-Dgpg.skip,-Djacoco.skip=true,-Denforcer.skip
-call LittleDarwin.exe -m -b -p /Users/%USERNAME%/Repositories/%repo_name%/src/main -t /Users/%USERNAME%/Repositories/%repo_name% --timeout=100 --initial-build-command mvn,clean,compile,%skipComma% -c mvn,clean,test
+call LittleDarwin.exe -m -b -p /Users/%USERNAME%/Repositories/%repo_name%/src/main -t /Users/%USERNAME%/Repositories/%repo_name% --timeout=100 --initial-build-command mvn,clean,compile,%skipComma% -c mvn,clean,test,%skipComma%
 
 rem Parse coverage data
 cd %origin%/Parser/target
