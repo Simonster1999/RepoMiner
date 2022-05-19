@@ -33,11 +33,17 @@ public class JsonParser {
             fmt.format("%15s %15s\n", "---------------", "---------------");
             mode = "mutation";
         }
-        else {
+        else if (jsonFile.equals("CoverageData.json")) {
             fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s);
             fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", "Tool Name", "Branch", "Instruction", "Line", "Method", "Class", "Statement", "Condition");
             fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s);
             mode = "coverage";
+        }
+        else {
+            fmt.format("%12s %12s %12s\n", s, s, s);
+            fmt.format("%12s %12s %12s\n", "Div Type", "AoA", "SD");
+            fmt.format("%12s %12s %12s\n", s, s, s);
+            mode = "diversity";
         }
 
         /* iterate over each tool in the jsonArray and passing to getData method */
@@ -59,6 +65,18 @@ public class JsonParser {
             String mutationCov = isNull((String) values.get("MUTATION"));
 
             fmt.format("%15s %15s\n", name, mutationCov);
+        }
+        else if (mode.equals("diversity")){
+            String name = values.get("DIVTYPE").toString();
+            String AoA = values.get("AVERAGEOFAVERAGE").toString();
+            String SD = values.get("STANDARDDIV").toString();
+
+            //String NCDAoA = isNull((String) NCD.get("AVERAGEOFAVERAGE"));
+            //String NCDMS = isNull((String) NCD.get("MEANSUITE"));
+            //String NCDSD = isNull((String) NCD.get("STANDARDDIV"));
+
+            fmt.format("%12s %12s %12s \n", name, AoA, SD);
+           // fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", "NCD", NCDAoA, NCDMS, NCDSD);
         }
         else if (mode.equals("coverage")) {
             /* also check if we receive any null values */

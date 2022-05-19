@@ -18,20 +18,18 @@ public class CSVParser {
         CSVReader reader = new CSVReader(new FileReader(CSVPath));
         HashMap<String, ArrayList<Float>> matrix = parseFile(reader);
         float averageOfAverage = getAverageOfAverage(matrix);
-        float meanSuite = getMeanOfSuite(matrix);
-        float standardDiv = getStandardDeviation(matrix, meanSuite);
+        float standardDiv = getStandardDeviation(matrix, averageOfAverage);
         JSONObject Diversity = new JSONObject();
         JSONObject vals = new JSONObject();
         vals.put("AVERAGEOFAVERAGE", averageOfAverage);
-        vals.put("MEANSUITE", meanSuite);
         vals.put("STANDARDDIV", standardDiv);
-        Diversity.put(divType, vals);
+        vals.put("DIVTYPE", divType);
+        Diversity.put("tool", vals);
 
         return Diversity;
     }
     private HashMap<String, ArrayList<Float>> parseFile(CSVReader reader) throws CsvValidationException, IOException {
         HashMap<String, ArrayList<Float>> testValueMatrix = new HashMap<>();
-        ArrayList<Float> values = new ArrayList<>();
         int iterations = 0;
         String[] columns;
         while ((columns = reader.readNext()) != null) {
@@ -39,10 +37,8 @@ public class CSVParser {
                 iterations++;
                 continue;
             }
-            for(int i = 0; i < columns.length; i++){
-                if(i == 0){
-                    continue;
-                }
+            ArrayList<Float> values = new ArrayList<>();
+            for(int i = 1; i < columns.length; i++){
                 values.add(Float.parseFloat(columns[i]));
             }
             testValueMatrix.put(columns[0], values);
@@ -50,44 +46,28 @@ public class CSVParser {
         return testValueMatrix;
     }
     private float getAverageOfAverage(HashMap<String, ArrayList<Float>> matrix){
-        ArrayList<Float> meanPerColumn = new ArrayList<Float>();
+        float mean = 0;
+        int n = 0;
         for(ArrayList<Float> column : matrix.values()){
             float total = 0;
             for(float value : column){
                 total += value;
             }
-            float mean = total/(column.size()-1);
-            meanPerColumn.add(mean);
+            mean += total/(column.size()-1);
+            n++;
         }
-        float total = 0;
-        for(float value : meanPerColumn){
-            total += value;
-        }
-
-        return total/meanPerColumn.size();
-    }
-    private float getMeanOfSuite(HashMap<String, ArrayList<Float>> matrix){
-        float total = 0;
-        int n = 0;
-
-        for(ArrayList<Float> column : matrix.values()){
-            for(float value : column){
-                total += value;
-                n++;
-            }
-        }
-        float mean = total/(n-1);
-
-        return mean;
+        return mean/n;
     }
     private float getStandardDeviation(HashMap<String, ArrayList<Float>> matrix, float mean) throws CsvValidationException, IOException {
         float s = 0;
-        int n = matrix.size();
+        int n = 0;
         for(ArrayList<Float> column : matrix.values()){
             for(float value : column){
-                s += (float) Math.sqrt(Math.pow(value - mean, 2) / (n*(column.size()-1)));
+                s += (float) Math.pow(value - mean, 2);
+                n++;
             }
         }
-        return s;
+        float sd = s / (n*(n- matrix.size()));
+        return (float)Math.sqrt(sd);
     }
 }
