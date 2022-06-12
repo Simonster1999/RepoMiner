@@ -99,10 +99,9 @@ if "%ans%" == "Y" set var=T
 if "%ans%" == "y" set var=T
 if "%var%" == "F" goto litDar
 
-set PITmutators=-Dmutators=CONDITIONALS_BOUNDARY,INCREMENTS,INVERT_NEGS,MATH,NEGATE_CONDITIONALS
-cd /Users/%USERNAME%/Repositories/%repo_name%
+cd /Users/%USERNAME%/%repo_name%
 echo Running PITest
-call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip% %PITmutators%
+call mvn -q test-compile org.pitest:pitest-maven:mutationCoverage %skip%
 
 rem Parse coverage data
 cd %origin%/Parser/target
