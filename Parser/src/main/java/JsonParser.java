@@ -2,6 +2,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import javax.swing.*;
 import java.io.*;
 import java.util.Formatter;
 
@@ -22,43 +24,37 @@ public class JsonParser {
         } catch (Exception e) {
             return "";
         }
-        /* a formatter object to print the result in a table with some styling */
-        Formatter fmt = new Formatter();
-        String s = "------------";
         String mode;
+        String table = "";
 
         if (jsonFile.equals("MutationData.json")) {
-            fmt.format("%15s %15s\n", "---------------", "---------------");
-            fmt.format("%15s %15s\n", "Tool Name", "Mutation Cov.");
-            fmt.format("%15s %15s\n", "---------------", "---------------");
             mode = "mutation";
+            table += "Tool Name,Mutation Cov.";
         }
         else {
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s);
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", "Tool Name", "Branch", "Instruction", "Line", "Method", "Class", "Statement", "Condition");
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", s, s, s, s, s, s, s, s);
             mode = "coverage";
+            table += "Tool Name,Branch,Instruction,Line,Method,Class,Statement,Condition";
         }
 
         /* iterate over each tool in the jsonArray and passing to getData method */
         for (Object tool : toolList){
-            getData((JSONObject) tool, fmt, mode);
+            table += getData((JSONObject) tool, mode);
         }
 
         /* return fmt as a string */
-        return fmt.toString();
+        return table;
     }
-    private void getData(JSONObject tool, Formatter fmt, String mode){
+    private String getData(JSONObject tool, String mode){
 
         /* store all the metrics in a variable called values */
         JSONObject values = (JSONObject) tool.get("tool");
-        if (values == null) return;
+        if (values == null) return null;
 
         if (mode.equals("mutation")) {
             String name = isNull((String) values.get("NAME"));
             String mutationCov = isNull((String) values.get("MUTATION"));
 
-            fmt.format("%15s %15s\n", name, mutationCov);
+            return "\n" + name + "," + mutationCov;
         }
         else if (mode.equals("coverage")) {
             /* also check if we receive any null values */
@@ -71,10 +67,9 @@ public class JsonParser {
             String statement = isNull((String) values.get("STATEMENT"));
             String condition = isNull((String) values.get("CONDITION"));
 
-        /* assign one row of the table to contain
-         the metric data from the tool that was passed */
-            fmt.format("%12s %12s %12s %12s %12s %12s %12s %12s\n", name, branch, instruction, line, method, clss, statement, condition);
+            return "\n" + name + "," + branch + "," + instruction + "," + line + "," + method + "," + clss + "," + statement + "," + condition;
         }
+        return null;
     }
 
     private String isNull(String value){
